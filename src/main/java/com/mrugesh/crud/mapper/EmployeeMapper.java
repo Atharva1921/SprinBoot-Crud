@@ -5,7 +5,7 @@ import com.mrugesh.crud.entity.Employee;
 
 public class EmployeeMapper {
 
-    public static EmployeeDto mapToEmployeeDto(Employee employee){
+    public static EmployeeDto employeeToEmployeeDto(Employee employee){
         return new EmployeeDto(
                 employee.getId(),
                 employee.getFirstname(),
@@ -14,7 +14,7 @@ public class EmployeeMapper {
                 );
     }
 
-    public static Employee mapToEmployee(EmployeeDto employeeDto){
+    public static Employee employeeDtoToEmployee(EmployeeDto employeeDto){
         return new Employee(
                 employeeDto.getId(),
                 employeeDto.getFirstName(),

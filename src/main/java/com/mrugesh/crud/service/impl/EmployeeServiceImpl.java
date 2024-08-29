@@ -7,6 +7,9 @@ import com.mrugesh.crud.mapper.EmployeeMapper;
 import com.mrugesh.crud.repository.EmployeeRepository;
 import com.mrugesh.crud.service.EmployeeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +24,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto){
 
-        Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
+        Employee employee = EmployeeMapper.employeeDtoToEmployee(employeeDto);
         Employee savedEmployee = employeeRepository.save(employee);
-        return EmployeeMapper.mapToEmployeeDto(savedEmployee);
+        return EmployeeMapper.employeeToEmployeeDto(savedEmployee);
     }
 
     @Override
@@ -31,13 +34,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Employee not exist with given id: "+ employeeId));
-        return EmployeeMapper.mapToEmployeeDto(employee);
+        return EmployeeMapper.employeeToEmployeeDto(employee);
     }
 
     @Override
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
-        return employees.stream().map(EmployeeMapper::mapToEmployeeDto)
+        return employees.stream().map(EmployeeMapper::employeeToEmployeeDto)
                 .collect(Collectors.toList());
     }
 
@@ -53,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee updatedEmployeeObj = employeeRepository.save(employee);
 
-        return EmployeeMapper.mapToEmployeeDto(updatedEmployeeObj);
+        return EmployeeMapper.employeeToEmployeeDto(updatedEmployeeObj);
     }
 
     @Override
@@ -64,5 +67,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeRepository.deleteById(employeeId);
 
+    }
+
+    //changes
+    @Override
+    public List<EmployeeDto> getAllEmployeesWithSorting(String field) {
+        List<Employee> employees =  employeeRepository.findAll(Sort.by(Sort.Direction.ASC,field));
+        return employees.stream().map(EmployeeMapper::employeeToEmployeeDto)
+                .collect(Collectors.toList());
+    }
+
+    //changes
+    @Override
+    public Page<EmployeeDto> getAllEmployeesWithPagination(int offset, int pageSize) {
+        Page<Employee> employees = employeeRepository.findAll(PageRequest.of(offset,pageSize));
+        return employees.map(EmployeeMapper::employeeToEmployeeDto);
+    }
+
+    //changes
+    @Override
+    public List<EmployeeDto> searchEmployees(String keyword) {
+        List<Employee> employees = this.employeeRepository.searchEmplooyees(keyword);
+        return employees.stream().map(EmployeeMapper::employeeToEmployeeDto).collect(Collectors.toList());
     }
 }

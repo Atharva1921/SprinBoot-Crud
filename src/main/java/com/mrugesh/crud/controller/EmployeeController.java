@@ -2,6 +2,7 @@ package com.mrugesh.crud.controller;
 
 import com.mrugesh.crud.dto.EmployeeDto;
 import com.mrugesh.crud.service.EmployeeService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class EmployeeController {
     }
 
     //Build Get Employee REST API
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") Long employeeId){
         EmployeeDto employeeDto = employeeService.getEmployeeById(employeeId);
         return ResponseEntity.ok(employeeDto);
@@ -39,8 +40,22 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
+    //sort chanegs
+    @GetMapping("/sort/{field}")
+    public ResponseEntity<List<EmployeeDto>>getAllEmployeesWithSorting(@PathVariable String field){
+        List<EmployeeDto> employees = employeeService.getAllEmployeesWithSorting(field);
+        return ResponseEntity.ok(employees);
+    }
+
+    //pagination changes
+    @GetMapping("/pagination/{offset}/{pageSize}")
+    public ResponseEntity<Page<EmployeeDto>>getAllEmployeesWithSorting(@PathVariable int offset, @PathVariable int pageSize){
+        Page<EmployeeDto> employees = employeeService.getAllEmployeesWithPagination(offset,pageSize);
+        return ResponseEntity.ok(employees);
+    }
+
     //Build Update Employee REST API
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") Long employeeid,
                                                       @RequestBody EmployeeDto updatedEmployee){
         EmployeeDto employeeDto = employeeService.updateEmployee(employeeid, updatedEmployee);
@@ -48,11 +63,19 @@ public class EmployeeController {
     }
 
     //Build Delete Employee REST API
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long employeeId){
         employeeService.deleteEmployee(employeeId);
         return ResponseEntity.ok("Employee deleted successfully.");
 
+    }
+
+    //searching changes
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeDto>> searchEmployees(String keyword) {
+
+        List<EmployeeDto> Employee = employeeService.searchEmployees(keyword);
+        return new ResponseEntity<>(Employee,HttpStatus.OK);
     }
 
 

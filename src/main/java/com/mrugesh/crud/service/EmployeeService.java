@@ -1,6 +1,7 @@
 package com.mrugesh.crud.service;
 
 import com.mrugesh.crud.dto.EmployeeDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,5 +16,11 @@ public interface EmployeeService {
 
     void deleteEmployee(Long employeeId);
 
+    //changes
+    List<EmployeeDto> getAllEmployeesWithSorting(String field);
+
+    Page<EmployeeDto> getAllEmployeesWithPagination(int offset, int pageSize);
+
+    List<EmployeeDto> searchEmployees(String keyword);
 }
 

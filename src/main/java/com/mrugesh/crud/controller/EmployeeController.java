@@ -70,12 +70,18 @@ public class EmployeeController {
 
     }
 
-    //searching changes
-    @GetMapping("/search")
-    public ResponseEntity<List<EmployeeDto>> searchEmployees(String keyword) {
+//    //searching changes
+//    @GetMapping("/search")
+//    public ResponseEntity<List<EmployeeDto>> searchEmployees(String keyword) {
+//
+//        List<EmployeeDto> Employee = employeeService.searchEmployees(keyword);
+//        return new ResponseEntity<>(Employee,HttpStatus.OK);
+//    }
 
-        List<EmployeeDto> Employee = employeeService.searchEmployees(keyword);
-        return new ResponseEntity<>(Employee,HttpStatus.OK);
+    @GetMapping("/filter")
+    public ResponseEntity<List<EmployeeDto>> getAllEmployeesWithFiltering(@RequestParam String firstName, @RequestParam String lastName) {
+        List<EmployeeDto>  employeeDto = this.employeeService.getAllEmployeesWithFilter(firstName,lastName);
+        return ResponseEntity.ok(employeeDto);
     }
 
 

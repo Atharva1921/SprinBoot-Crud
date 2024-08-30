@@ -5,11 +5,13 @@ import com.mrugesh.crud.entity.Employee;
 import com.mrugesh.crud.exception.ResourceNotFoundException;
 import com.mrugesh.crud.mapper.EmployeeMapper;
 import com.mrugesh.crud.repository.EmployeeRepository;
+import com.mrugesh.crud.repository.specification.EmployeeSpecification;
 import com.mrugesh.crud.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -84,10 +86,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employees.map(EmployeeMapper::employeeToEmployeeDto);
     }
 
-    //changes
+//    //changes
+//    @Override
+//    public List<EmployeeDto> searchEmployees(String keyword) {
+//        List<Employee> employees = this.employeeRepository.searchEmplooyees(keyword);
+//        return employees.stream().map(EmployeeMapper::employeeToEmployeeDto).collect(Collectors.toList());
+//    }
+
     @Override
-    public List<EmployeeDto> searchEmployees(String keyword) {
-        List<Employee> employees = this.employeeRepository.searchEmplooyees(keyword);
+    public List<EmployeeDto> getAllEmployeesWithFilter(String firstName, String lastName) {
+        final Specification<Employee> specification = EmployeeSpecification.filterEmployee(firstName,lastName);
+        final List<Employee> employees = this.employeeRepository.findAll(specification);
         return employees.stream().map(EmployeeMapper::employeeToEmployeeDto).collect(Collectors.toList());
     }
 }

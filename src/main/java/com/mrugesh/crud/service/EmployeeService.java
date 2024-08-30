@@ -21,6 +21,8 @@ public interface EmployeeService {
 
     Page<EmployeeDto> getAllEmployeesWithPagination(int offset, int pageSize);
 
-    List<EmployeeDto> searchEmployees(String keyword);
+//    List<EmployeeDto> searchEmployees(String keyword);
+
+    List<EmployeeDto> getAllEmployeesWithFilter(String firstName, String lastName);
 }
 

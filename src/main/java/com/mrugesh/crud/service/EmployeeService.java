@@ -1,9 +1,11 @@
 package com.mrugesh.crud.service;
 
 import com.mrugesh.crud.dto.EmployeeDto;
+import com.mrugesh.crud.entity.SearchCriteria;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EmployeeService {
     EmployeeDto createEmployee(EmployeeDto employeeDto);
@@ -23,6 +25,8 @@ public interface EmployeeService {
 
 //    List<EmployeeDto> searchEmployees(String keyword);
 
-    List<EmployeeDto> getAllEmployeesWithFilter(String firstName, String lastName);
+    List<EmployeeDto> searchEmployeeByCriteria(SearchCriteria searchCriteria);
+
+    Page<EmployeeDto> searchEmployeeWithPagination(Map<String, String> params);
 }
 

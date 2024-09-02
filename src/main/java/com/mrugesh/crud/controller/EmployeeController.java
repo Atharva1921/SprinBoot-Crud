@@ -1,6 +1,7 @@
 package com.mrugesh.crud.controller;
 
 import com.mrugesh.crud.dto.EmployeeDto;
+import com.mrugesh.crud.entity.SearchCriteria;
 import com.mrugesh.crud.service.EmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -78,12 +80,17 @@ public class EmployeeController {
 //        return new ResponseEntity<>(Employee,HttpStatus.OK);
 //    }
 
-    @GetMapping("/filter")
-    public ResponseEntity<List<EmployeeDto>> getAllEmployeesWithFiltering(@RequestParam String firstName, @RequestParam String lastName) {
-        List<EmployeeDto>  employeeDto = this.employeeService.getAllEmployeesWithFilter(firstName,lastName);
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeDto>> getAllEmployeesWithFiltering(@RequestBody SearchCriteria searchCriteria) {
+        List<EmployeeDto>  employeeDto = this.employeeService.searchEmployeeByCriteria(searchCriteria);
         return ResponseEntity.ok(employeeDto);
     }
 
+    @GetMapping("/search&pagination")
+    public ResponseEntity<Page<EmployeeDto>> test(@RequestParam Map<String,String> params) {
+        Page<EmployeeDto>  employeeDto = this.employeeService.searchEmployeeWithPagination(params);
+        return ResponseEntity.ok(employeeDto);
+    }
 
 
 }

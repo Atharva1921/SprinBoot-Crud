@@ -106,11 +106,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         params.remove("offset");
         params.remove("pageSize");
 
-
         Specification<Employee> specification = EmployeeSpecification.getSpecification(params);
-
-
-
 
         final Page<Employee> employees = this.employeeRepository.findAll(specification,pageable);
         return employees.map(EmployeeMapper::employeeToEmployeeDto);

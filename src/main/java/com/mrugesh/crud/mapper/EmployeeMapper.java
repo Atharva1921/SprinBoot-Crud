@@ -2,24 +2,13 @@ package com.mrugesh.crud.mapper;
 
 import com.mrugesh.crud.dto.EmployeeDto;
 import com.mrugesh.crud.entity.Employee;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-public class EmployeeMapper {
+@Mapper()
+public interface EmployeeMapper {
 
-    public static EmployeeDto employeeToEmployeeDto(Employee employee){
-        return new EmployeeDto(
-                employee.getId(),
-                employee.getFirstname(),
-                employee.getLastname(),
-                employee.getEmail()
-                );
-    }
+    EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
 
-    public static Employee employeeDtoToEmployee(EmployeeDto employeeDto){
-        return new Employee(
-                employeeDto.getId(),
-                employeeDto.getFirstName(),
-                employeeDto.getLastName(),
-                employeeDto.getEmail()
-                );
-    }
+    EmployeeDto employeeEntityToEmployeeDto(Employee employee);
 }

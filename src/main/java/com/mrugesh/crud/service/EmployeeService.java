@@ -1,32 +1,68 @@
 package com.mrugesh.crud.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mrugesh.crud.dto.EmployeeDto;
-import com.mrugesh.crud.entity.SearchCriteria;
+import com.mrugesh.crud.dto.FilterDto;
+import com.mrugesh.crud.dto.SortDto;
+import com.mrugesh.crud.entity.Employee;
+import com.mrugesh.crud.mapper.EmployeeMapper;
+import com.mrugesh.crud.repository.EmployeeRepository;
+import com.mrugesh.crud.repository.specification.EmployeeSpecification;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
-public interface EmployeeService {
-    EmployeeDto createEmployee(EmployeeDto employeeDto);
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class EmployeeService {
 
-    EmployeeDto getEmployeeById(Long employeeId);
+    private final EmployeeRepository employeeRepository;
 
-    List<EmployeeDto> getAllEmployees();
+    public Page<EmployeeDto> searchEmployeeWithPaginationSortingAndFiltering(EmployeeDto employeeDto) {
 
-    EmployeeDto updateEmployee(Long employeeId, EmployeeDto updatedEmployee);
+        FilterDto filterDto = FilterDto.builder()
+                .firstName(employeeDto.getFirstName())
+                .salary(employeeDto.getSalary())
+                .birthYear(employeeDto.getBirthYear())
+                .build();
 
-    void deleteEmployee(Long employeeId);
+        List<SortDto> sortDtos = jsonStringToSortDto(employeeDto.getSort());
+        List<Sort.Order> orders = new ArrayList<>();
 
-    //changes
-    List<EmployeeDto> getAllEmployeesWithSorting(String field);
+        if (sortDtos != null) {
+            for(SortDto sortDto: sortDtos) {
+                Sort.Direction direction = Objects.equals(sortDto.getDirection(), "desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+                orders.add(new Sort.Order(direction,sortDto.getField()));
+            }
+        }
 
-    Page<EmployeeDto> getAllEmployeesWithPagination(int offset, int pageSize);
+        PageRequest pageRequest = PageRequest.of(employeeDto.getPage(),employeeDto.getSize(),Sort.by(orders));
 
-//    List<EmployeeDto> searchEmployees(String keyword);
+        Specification<Employee> specification = EmployeeSpecification.getSpecification(filterDto);
 
-    List<EmployeeDto> searchEmployeeByCriteria(SearchCriteria searchCriteria);
+        Page<Employee> employees = employeeRepository.findAll(specification,pageRequest);
+        log.info("data --------- {}",pageRequest);
+        return employees.map(EmployeeMapper.INSTANCE::employeeEntityToEmployeeDto);
+    }
 
-    Page<EmployeeDto> searchEmployeeWithPagination(Map<String, String> params);
+    private List<SortDto> jsonStringToSortDto(String jsonString) {
+        try {
+            ObjectMapper obj = new ObjectMapper();
+            return obj.readValue(jsonString, new TypeReference<>() {});
+        } catch (Exception e) {
+            log.info("Exception: {}",e);
+            return null;
+        }
+    }
 }
-

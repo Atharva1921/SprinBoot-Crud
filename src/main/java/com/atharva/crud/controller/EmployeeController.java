@@ -1,13 +1,12 @@
-package com.mrugesh.crud.controller;
+package com.atharva.crud.controller;
 
-import com.mrugesh.crud.dto.EmployeeDto;
-import com.mrugesh.crud.service.EmployeeService;
+import com.atharva.crud.service.EmployeeService;
+import com.atharva.crud.dto.EmployeeInDto;
+import com.atharva.crud.dto.EmployeeOutDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,14 +15,9 @@ public class EmployeeController {
 
     public final EmployeeService employeeService;
 
-//    @GetMapping("/search&pagination")
-//    public ResponseEntity<Page<EmployeeDto>> test(@RequestParam Map<String,String> params) {
-//        Page<EmployeeDto>  employeeDto = this.employeeService.searchEmployeeWithPagination(params);
-//        return ResponseEntity.ok(employeeDto);
-//    }
 
     @GetMapping("/filtering&pagination&sorting")
-    public ResponseEntity<Page<EmployeeDto>> test(
+    public ResponseEntity<Page<EmployeeOutDto>> test(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "5") Integer size,
             @RequestParam(name = "sort", defaultValue = "[{\"field\":\"firstName\",\"direction\":\"desc\"}]") String sort,
@@ -32,8 +26,8 @@ public class EmployeeController {
             @RequestParam(name = "birth_year", required = false) Integer birthYear
     ) {
 
-        Page<EmployeeDto>  employeeDto = employeeService.searchEmployeeWithPaginationSortingAndFiltering(
-                EmployeeDto.builder()
+        Page<EmployeeOutDto> employeeDto = employeeService.searchEmployeeWithPaginationSortingAndFiltering(
+                EmployeeInDto.builder()
                         .firstName(firstName)
                         .salary(salary)
                         .birthYear(birthYear)
@@ -44,6 +38,7 @@ public class EmployeeController {
 
         return ResponseEntity.ok(employeeDto);
     }
+
 
 
 

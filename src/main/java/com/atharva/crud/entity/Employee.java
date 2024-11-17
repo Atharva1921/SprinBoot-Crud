@@ -1,4 +1,4 @@
-package com.mrugesh.crud.entity;
+package com.atharva.crud.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import lombok.*;
 public class Employee {
 
     @Id
-    private Long id;
+    @Column(name = "id")
+    private Integer id;
 
     @Column(name = "first_name")
     private String firstName;

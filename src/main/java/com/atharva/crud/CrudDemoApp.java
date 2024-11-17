@@ -1,4 +1,4 @@
-package com.mrugesh.crud;
+package com.atharva.crud;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

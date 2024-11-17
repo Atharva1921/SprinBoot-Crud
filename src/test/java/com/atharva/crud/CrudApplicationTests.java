@@ -1,4 +1,4 @@
-package com.mrugesh.crud;
+package com.atharva.crud;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

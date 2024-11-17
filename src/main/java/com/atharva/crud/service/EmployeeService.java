@@ -1,15 +1,15 @@
-package com.mrugesh.crud.service;
+package com.atharva.crud.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mrugesh.crud.dto.EmployeeDto;
-import com.mrugesh.crud.dto.FilterDto;
-import com.mrugesh.crud.dto.SortDto;
-import com.mrugesh.crud.entity.Employee;
-import com.mrugesh.crud.mapper.EmployeeMapper;
-import com.mrugesh.crud.repository.EmployeeRepository;
-import com.mrugesh.crud.repository.specification.EmployeeSpecification;
-import lombok.AllArgsConstructor;
+import com.atharva.crud.dto.EmployeeInDto;
+import com.atharva.crud.dto.EmployeeOutDto;
+import com.atharva.crud.dto.FilterDto;
+import com.atharva.crud.dto.SortDto;
+import com.atharva.crud.entity.Employee;
+import com.atharva.crud.mapper.EmployeeMapper;
+import com.atharva.crud.repository.EmployeeRepository;
+import com.atharva.crud.repository.specification.EmployeeSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,15 +29,14 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    public Page<EmployeeDto> searchEmployeeWithPaginationSortingAndFiltering(EmployeeDto employeeDto) {
+    public Page<EmployeeOutDto> searchEmployeeWithPaginationSortingAndFiltering(EmployeeInDto employeeInDto) {
 
         FilterDto filterDto = FilterDto.builder()
-                .firstName(employeeDto.getFirstName())
-                .salary(employeeDto.getSalary())
-                .birthYear(employeeDto.getBirthYear())
+                .salary(employeeInDto.getSalary())
+                .birthYear(employeeInDto.getBirthYear())
                 .build();
 
-        List<SortDto> sortDtos = jsonStringToSortDto(employeeDto.getSort());
+        List<SortDto> sortDtos = jsonStringToSortDto(employeeInDto.getSort());
         List<Sort.Order> orders = new ArrayList<>();
 
         if (sortDtos != null) {
@@ -47,12 +46,15 @@ public class EmployeeService {
             }
         }
 
-        PageRequest pageRequest = PageRequest.of(employeeDto.getPage(),employeeDto.getSize(),Sort.by(orders));
+        log.info("sort{}",sortDtos);
+        log.info("filter{}",filterDto);
+
+        PageRequest pageRequest = PageRequest.of(employeeInDto.getPage(), employeeInDto.getSize(),Sort.by(orders));
 
         Specification<Employee> specification = EmployeeSpecification.getSpecification(filterDto);
 
         Page<Employee> employees = employeeRepository.findAll(specification,pageRequest);
-        log.info("data --------- {}",pageRequest);
+
         return employees.map(EmployeeMapper.INSTANCE::employeeEntityToEmployeeDto);
     }
 

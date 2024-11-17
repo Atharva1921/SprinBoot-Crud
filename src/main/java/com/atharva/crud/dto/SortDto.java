@@ -1,4 +1,4 @@
-package com.mrugesh.crud.dto;
+package com.atharva.crud.dto;
 
 
 import lombok.AllArgsConstructor;

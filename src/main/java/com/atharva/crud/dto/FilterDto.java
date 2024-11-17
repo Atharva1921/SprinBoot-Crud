@@ -1,4 +1,4 @@
-package com.mrugesh.crud.dto;
+package com.atharva.crud.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FilterDto {
 
-    private String firstName;
     private Integer salary;
     private Integer birthYear;
 }

@@ -4,9 +4,13 @@ import com.atharva.crud.service.EmployeeService;
 import com.atharva.crud.dto.EmployeeInDto;
 import com.atharva.crud.dto.EmployeeOutDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayInputStream;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,8 +43,21 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeDto);
     }
 
+    @GetMapping("/download")
+    public ResponseEntity<InputStreamResource> downloadFile() {
 
+        byte[] fileContent = employeeService.generateFileContent();
 
+        InputStreamResource resource = new InputStreamResource(
+                new ByteArrayInputStream(fileContent)
+        );
 
+        String fileName = "testDownload.csv";
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+                .body(resource);
+    }
 
 }

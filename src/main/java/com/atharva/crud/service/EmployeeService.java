@@ -10,6 +10,7 @@ import com.atharva.crud.entity.Employee;
 import com.atharva.crud.mapper.EmployeeMapper;
 import com.atharva.crud.repository.EmployeeRepository;
 import com.atharva.crud.repository.specification.EmployeeSpecification;
+import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -67,4 +71,46 @@ public class EmployeeService {
             return null;
         }
     }
+
+    public byte[] generateFileContent() {
+
+
+        List<Employee> employees = employeeRepository.fetchEmployees();
+        log.info("Fetched employees: {}", employees);
+
+        List<EmployeeOutDto> employeeDtos = employees.stream().map(EmployeeMapper.INSTANCE::employeeEntityToEmployeeDto).toList();
+
+        return writeEmployees(employeeDtos);
+
+    }
+
+    private byte[] writeEmployees(List<EmployeeOutDto> employeeDtos) {
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+             CSVWriter csvWriter = new CSVWriter(writer)) {
+
+            List<String[]> data = employeeDtos.stream()
+                    .map(emp -> new String[] {
+                            String.valueOf(emp.getId()),
+                            emp.getFirstName(),
+                            emp.getLastName(),
+                            String.valueOf(emp.getBirthYear()),
+                            String.valueOf(emp.getSalary())
+                    })
+                    .toList();
+
+            csvWriter.writeAll(data);
+            csvWriter.flush();
+
+            return outputStream.toByteArray();
+
+        } catch (IOException e) {
+            log.info("Exception: {}",e);
+            return new byte[0];
+        }
+
+    }
+
+
 }
